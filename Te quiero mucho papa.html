@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feliz Día del Padre</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #e0f7fa, #fffde7);
+      font-family: 'Open Sans', sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      position: relative;
+      z-index: 2;
+    }
+
+    .envelope {
+      width: 300px;
+      height: 200px;
+      background: #fdd835;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      z-index: 3;
+    }
+
+    .flap {
+      width: 300px;
+      height: 150px;
+      background: #fbc02d;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: top center;
+      transition: transform 1s ease;
+      z-index: 4;
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    }
+
+    .envelope.open .flap {
+      transform: rotateX(180deg);
+    }
+
+    .letter {
+      width: 280px;
+      height: 180px;
+      background: white;
+      position: absolute;
+      top: 100%;
+      left: 10px;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: top 1s ease;
+      z-index: 2;
+      opacity: 0;
+      border-radius: 5px;
+    }
+
+    .envelope.open .letter {
+      top: 10px;
+      opacity: 1;
+    }
+
+    .message {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.5rem;
+      color: #424242;
+      text-align: center;
+    }
+
+    .heart {
+      width: 80px;
+      margin-top: 20px;
+      animation: heartbeat 1.5s infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .floating-hearts, .confetti {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .floating-hearts span, .confetti div {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/f/f1/Heart_coraz%C3%B3n.svg') no-repeat center center / contain;
+    }
+
+    .confetti div {
+      background: none;
+      background-color: #f44336;
+      border-radius: 50%;
+    }
+
+    .confetti div:nth-child(2n) { background-color: #2196f3; }
+    .confetti div:nth-child(3n) { background-color: #4caf50; }
+    .confetti div:nth-child(4n) { background-color: #ffeb3b; }
+  </style>
+</head>
+<body>
+  <div class="floating-hearts"></div>
+  <div class="confetti"></div>
+
+  <div class="container">
+    <div class="envelope" id="envelope">
+      <div class="flap"></div>
+      <div class="letter">
+        <div class="message">
+          ¡Feliz Día del Padre!<br>
+          Gracias por tu amor, esfuerzo y ejemplo.<br>
+          ❤️ Te quiero mucho ❤️
+        </div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Heart_coraz%C3%B3n.svg" class="heart" />
+      </div>
+    </div>
+  </div>
+
+  <audio id="bgMusic" loop>
+    <source src="Te quiero papa.mp3" type="audio/mpeg">
+    Tu navegador no soporta el audio.
+  </audio>
+
+  <script>
+    const envelope = document.getElementById("envelope");
+    const music = document.getElementById("bgMusic");
+
+    envelope.addEventListener("click", function () {
+      envelope.classList.toggle("open");
+      music.play().catch(() => {
+        console.log("El navegador bloqueó la reproducción automática.");
+      });
+    });
+
+    function createBouncingElement(container, isHeart) {
+      const el = document.createElement('span');
+      if (!isHeart) el.tagName = 'div';
+      el.style.position = 'absolute';
+      el.style.width = '40px';
+      el.style.height = '40px';
+      el.style.left = Math.random() * window.innerWidth + 'px';
+      el.style.top = Math.random() * window.innerHeight + 'px';
+      if (isHeart) {
+        el.style.background = "url('https://upload.wikimedia.org/wikipedia/commons/f/f1/Heart_coraz%C3%B3n.svg') no-repeat center center / contain";
+      } else {
+        const colors = ['#f44336', '#2196f3', '#4caf50', '#ffeb3b'];
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.borderRadius = '50%';
+      }
+      container.appendChild(el);
+
+      let x = Math.random() * (window.innerWidth - 40);
+      let y = Math.random() * (window.innerHeight - 40);
+      let dx = (Math.random() - 0.5) * 4;
+      let dy = (Math.random() - 0.5) * 4;
+
+      function animate() {
+        if (x + dx < 0 || x + dx > window.innerWidth - 40) dx *= -1;
+        if (y + dy < 0 || y + dy > window.innerHeight - 40) dy *= -1;
+        x += dx;
+        y += dy;
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    for (let i = 0; i < 10; i++) {
+      createBouncingElement(document.querySelector('.floating-hearts'), true);
+      createBouncingElement(document.querySelector('.confetti'), false);
+    }
+  </script>
+</body>
+</html>
